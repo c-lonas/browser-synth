@@ -1,2 +1,53 @@
-<h1>title</h1>
-<p> Hello World </p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Synth + EQ </title>
+    <link rel="icon" type="img/png" href="public/assets/favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/synth.js"></script>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <a>Chase Lonas Development</a>
+        </div>
+    </div>
+    <div class="wrapper">
+        <div class="main-content-container">
+            <div class="synth-container">
+                <canvas id="synth-pad"></canvas>
+                <div class="canvas-info">
+                    <p>info for synth</p>
+                    <div>
+                        <span id="frequency">Frequency: </span><br>
+                        <span id="volume">Volume: </span>
+                    </div>
+                    <div class="filter-container">
+                        <span>hpf</span>
+                        <input id="hpf" type="range" min="200" max="500" step="1" value="250"/>
+                        <br>
+                        <br>
+                        <span>lpf</span>
+                        <input id="lpf" type="range" min="200" max="500" step="1" value="250"/>
+                    </div>
+                    <div class="wave-buttons-container">
+                       <button class="wave-btn tri-btn">Tri</button> 
+                       <button class="wave-btn sq-btn">Sq</button> 
+                       <button class="wave-btn saw-btn">Saw</button> 
+                       <button class="wave-btn sin-btn" id="wave-select">Sin</button> 
+                    </div>
+                    <p class="credits"> Synth pad functionality is based on <a href="https://blog.teamtreehouse.com/building-a-synthesizer-with-the-web-audio-api" target="_blank">this tutorial</a> by Matt West </p>
+                </div>
+            </div>
+            <div class="eq-container">
+                <h1>EQ thing here</h1>
+            </div>
+        </div>
+
+    </div>
+    
+</body>
+</html>
