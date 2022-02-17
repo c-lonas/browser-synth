@@ -6,9 +6,19 @@ let SynthPad = (function() {
     let myAudioContext;
     let oscillator;
     let gainNode;
-    let panNode;
     let hpFilter;
     let lpFilter;
+
+    let analyserCanvas;
+    let analyser;
+    let bufferLength;
+    let dataArray;
+
+    let freqCanvas;
+    let freqAnalyser;
+    let freqBufferLength;
+    let freqDataArray;
+   
 
     //Notes
     let lowNote = 261.63;  // C4
@@ -28,8 +38,12 @@ let SynthPad = (function() {
     sineBtn = document.getElementsByClassName('sin-btn')[0];
     waveButtons = document.getElementsByClassName('wave-btn');
 
+    analyserCanvas = document.getElementById("analyser-canvas");
+    canvasCtx = analyserCanvas.getContext('2d');
+    freqCanvas = document.getElementById("freq-canvas");
+    freqCtx = freqCanvas.getContext('2d');
 
-  
+
     // Create an audio context.
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     myAudioContext = new window.AudioContext();
@@ -88,40 +102,53 @@ let SynthPad = (function() {
   // Play a note.
   SynthPad.playSound = function(event) {
     oscillator = myAudioContext.createOscillator();
-    panNode = myAudioContext.createPanner();
     gainNode = myAudioContext.createGain();
     hpFilter = myAudioContext.createBiquadFilter();
     lpFilter = myAudioContext.createBiquadFilter();
+    analyser = myAudioContext.createAnalyser();
+    freqAnalyser = myAudioContext.createAnalyser();
 
-    
     // filter variables
     lpf = document.getElementById('lpf').value;
     hpf = document.getElementById('hpf').value;
 
     hpFilter.type = "highpass"
     hpFilter.frequency.value = hpf;
-    console.log("hpf: " + hpf)
+    hpFilter.Q.values = 20;
     
     lpFilter.type = "lowpass"
     lpFilter.frequency.value = lpf;
-    console.log("lpf: " + lpf)
-    
-    //panner variables
-    
-    //delay variables
+    lpFilter.Q.value = 20;
 
-    // oscillator variables
+    // analyzer variables
+    analyser.fftSize = 2048;
+    bufferLength = analyser.frequencyBinCount;
+    dataArray = new Uint8Array(bufferLength);
+
+    freqAnalyser.fftSize = 256;
+    freqBufferLength = freqAnalyser.frequencyBinCount;
+    freqDataArray = new Uint8Array(freqBufferLength);
+
+    
+    // oscillator variable
     oscillator.type = waveType;
-  
-    gainNode.connect(myAudioContext.destination);
-    hpFilter.connect(gainNode);
+
+
+    oscillator.connect(analyser);
+    oscillator.connect(freqAnalyser);
+    freqAnalyser.connect(gainNode);
+    analyser.connect(gainNode);
+    gainNode.connect(lpFilter);
     lpFilter.connect(hpFilter);
-    panNode.connect(hpFilter);
-    oscillator.connect(lpFilter);
-  
+    hpFilter.connect(myAudioContext.destination);
+
+
     SynthPad.updateFrequency(event);
-  
     oscillator.start(0);
+
+    SynthPad.drawAnalyser();
+    SynthPad.drawFreqAnalyser();
+
   
     myCanvas.addEventListener('mousemove', SynthPad.updateFrequency);
     myCanvas.addEventListener('touchmove', SynthPad.updateFrequency);
@@ -175,7 +202,65 @@ let SynthPad = (function() {
       SynthPad.calculateFrequency(touch.pageX, touch.pageY);
     }
   };
+           
+  SynthPad.drawAnalyser = function() {
+    
+    canvasCtx.clearRect(0, 0, 600, 200);
+    drawVisual = requestAnimationFrame(SynthPad.drawAnalyser);
+    analyser.getByteTimeDomainData(dataArray);
+    
+    canvasCtx.fillStyle = 'rgb(200, 200, 200)';
+    canvasCtx.fillRect(0, 0, canvasCtx.width, canvasCtx.height);
+    canvasCtx.lineWidth = 2;
+    canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
 
+    canvasCtx.beginPath();
+
+    var sliceWidth = 600 * 1.0 / bufferLength;
+    var x = 0;
+
+    for(var i = 0; i < bufferLength; i++) {
+   
+        var v = dataArray[i] / 128.0;
+        var y = v * 200/3;
+
+        if(i === 0) {
+          canvasCtx.moveTo(x, y);
+        } else {
+          canvasCtx.lineTo(x, y);
+        }
+
+        x += sliceWidth;
+      };
+    
+    canvasCtx.lineTo(600, 200/2);
+    canvasCtx.stroke();
+  
+  };
+
+  SynthPad.drawFreqAnalyser = function() {
+
+    freqCtx.clearRect(0, 0, 600, 200);
+    drawSomething = requestAnimationFrame(SynthPad.drawFreqAnalyser);
+    freqAnalyser.getByteFrequencyData(freqDataArray);
+
+    freqCtx.fillStyle = "rgb(0, 0, 0)";
+    freqCtx.fillRect(0, 0, freqCtx.width, freqCtx.height);
+
+    var barWidth = ((600 / freqBufferLength));
+    var barHeight;
+    var x = 0
+
+    for(var i = 0; i < freqBufferLength; i++) {
+      barHeight = freqDataArray[i] * 1.5;
+
+      freqCtx.fillStyle = 'rgb(' + (barHeight + 100) + ',50,50)';
+      freqCtx.fillRect(x, 200 - barHeight / 2, barWidth, barHeight);
+
+      x += barWidth + 1;
+    }
+
+  };
 
   // Export SynthPad
   return SynthPad;

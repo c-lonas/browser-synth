@@ -4,50 +4,77 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Synth + EQ </title>
-    <link rel="icon" type="img/png" href="public/assets/favicon.png">
+    <title> Browser Synth </title>
+    <link rel="icon" type="img/png" href="assets/favicon.png">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    
     <script src="js/synth.js"></script>
 </head>
 <body>
     <div class="header">
         <div class="logo-container">
-            <a>Chase Lonas Development</a>
+            <a href="https://chaselonas.dev" target="_blank">Chase Lonas Development</a>
         </div>
     </div>
     <div class="wrapper">
         <div class="main-content-container">
+            <h1 class="title">Synth Controller</h1>
+            
             <div class="synth-container">
-                <canvas id="synth-pad"></canvas>
-                <div class="canvas-info">
-                    <p>info for synth</p>
+                <div class="wave-buttons-container">
+                    <button class="wave-btn tri-btn" id="wave-select"><image src="assets/triangle-wave.png"></image></button> 
+                    <button class="wave-btn sq-btn"><image src="assets/square-wave.png"></image></button> 
+                    <button class="wave-btn saw-btn"><image src="assets/sawtooth-wave.png"></image></button> 
+                    <button class="wave-btn sin-btn"><image src="assets/sine-wave.png"></image></button> 
+                </div>
+                <div class="synth-pad-and-info">
+                    <canvas id="synth-pad" style="background-image: url(assets/hex-bgr-1.jpg); background-size: 100%;"></canvas>
                     <div>
-                        <span id="frequency">Frequency: </span><br>
-                        <span id="volume">Volume: </span>
+                        <div class="canvas-info">
+                            <p>
+                                <span id="frequency">Frequency</span>
+                            </p>
+                            <br>
+                            <p> Gain:
+                                <span id="volume">Volume</span>
+                            </p>
+
+                        </div>
                     </div>
+                </div>
                     <div class="filter-container">
-                        <span>hpf</span>
-                        <input id="hpf" type="range" min="200" max="500" step="1" value="250"/>
-                        <br>
-                        <br>
-                        <span>lpf</span>
-                        <input id="lpf" type="range" min="200" max="500" step="1" value="250"/>
+                    <div class="filter-ranges">
+                        <label class="filter-label" for="hpf">High Pass Filter</label>
+                        <input class="filter-slider" id="hpf" type="range" name="hpf" orient="vertical" min="200" max="500" step="1" value="250"/>
                     </div>
-                    <div class="wave-buttons-container">
-                       <button class="wave-btn tri-btn">Tri</button> 
-                       <button class="wave-btn sq-btn">Sq</button> 
-                       <button class="wave-btn saw-btn">Saw</button> 
-                       <button class="wave-btn sin-btn" id="wave-select">Sin</button> 
+                    <br>
+                    <div class="filter-ranges">
+                        <label class="filter-label">Low Pass Filter</label>
+                        <input class="filter-slider" id="lpf" type="range" orient="vertical" min="200" max="500" step="1" value="250"/>
                     </div>
-                    <p class="credits"> Synth pad functionality is based on <a href="https://blog.teamtreehouse.com/building-a-synthesizer-with-the-web-audio-api" target="_blank">this tutorial</a> by Matt West </p>
+                </div>
+    
+                <div class="canvas-container">
+                    <div class="eq-container">
+                        <canvas id="analyser-canvas"></canvas>
+                    </div>
+                    <div class="eq-container">
+                        <canvas id="freq-canvas"></canvas>
+                    </div>
                 </div>
             </div>
-            <div class="eq-container">
-                <h1>EQ thing here</h1>
-            </div>
+           
         </div>
-
+        <p class="credits"> Synth pad functionality built from 
+            <a href="https://blog.teamtreehouse.com/building-a-synthesizer-with-the-web-audio-api" target="_blank">this tutorial</a>
+            by Matt West 
+        </p>
     </div>
+
+    
     
 </body>
 </html>
